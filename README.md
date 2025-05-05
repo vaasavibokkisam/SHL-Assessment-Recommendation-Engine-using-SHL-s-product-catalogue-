@@ -1,0 +1,2 @@
+# SHL-Assessment-Recommendation-Engine-using-SHL-s-product-catalogue-
+his project is a web-based recommendation system that suggests the most relevant SHL assessments based on user input such as job roles, skills, or competency requirements. It is built using Streamlit, sentence-transformers, and ChromaDB, and follows a Retrieval-Augmented Generation (RAG) pattern to enhance relevance and interpretability.
