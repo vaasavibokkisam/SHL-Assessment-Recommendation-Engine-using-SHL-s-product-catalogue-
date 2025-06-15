@@ -14,67 +14,67 @@ Original file is located at
 !pip install streamlit
 
 # Commented out IPython magic to ensure Python compatibility.
-# %%writefile app.py
-# import streamlit as st
-# import pandas as pd
-# from langchain.vectorstores import Chroma
-# from langchain.embeddings import HuggingFaceEmbeddings
-# from langchain.chains import RetrievalQA
-# from langchain_groq.chat_models import ChatGroq
-# from langchain.text_splitter import RecursiveCharacterTextSplitter
-# from langchain.docstore.document import Document
-# from langchain.prompts import PromptTemplate # Import PromptTemplate
-# import os
+%%writefile app.py
+import streamlit as st
+import pandas as pd
+from langchain.vectorstores import Chroma
+from langchain.embeddings import HuggingFaceEmbeddings
+from langchain.chains import RetrievalQA
+from langchain_groq.chat_models import ChatGroq
+from langchain.text_splitter import RecursiveCharacterTextSplitter
+from langchain.docstore.document import Document
+from langchain.prompts import PromptTemplate # Import PromptTemplate
+import os
 # 
 # # Set up API key for Groq
-# GROQ_API_KEY = "API KEY  # Replace this
+GROQ_API_KEY = "API KEY  # Replace this
 # 
 # # Load cleaned SHL catalog CSV
-# @st.cache_data
-# def load_data():
-#     df = pd.read_csv("/content/shl_assessment_dataset_cleaned.csv")
-#     df["full_text"] = df["Assessment Name"] + ". " + df["Assessment Description"] + ". " + df["Skills/Competencies"] + ". " + df["Job Roles/Industries"]
-#     return df
+@st.cache_data
+def load_data():
+     df = pd.read_csv("/content/shl_assessment_dataset_cleaned.csv")
+     df["full_text"] = df["Assessment Name"] + ". " + df["Assessment Description"] + ". " + df["Skills/Competencies"] + ". " + df["Job Roles/Industries"]
+     return df
 # 
 # # Create vector store from dataframe
-# def create_vector_store(df):
-#     docs = [Document(page_content=row["full_text"]) for _, row in df.iterrows()]
-#     splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
-#     chunks = splitter.split_documents(docs)
-#     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
-#     vectordb = Chroma.from_documents(chunks, embeddings, persist_directory="./chroma_store")
-#     return vectordb
+ def create_vector_store(df):
+     docs = [Document(page_content=row["full_text"]) for _, row in df.iterrows()]
+     splitter = RecursiveCharacterTextSplitter(chunk_size=512, chunk_overlap=50)
+     chunks = splitter.split_documents(docs)
+     embeddings = HuggingFaceEmbeddings(model_name="all-MiniLM-L6-v2")
+     vectordb = Chroma.from_documents(chunks, embeddings, persist_directory="./chroma_store")
+     return vectordb
 # 
 # # Streamlit App
-# st.title("🧠 SHL Assessment Recommendation Chatbot")
-# st.markdown("Ask something like: *I need an assessment for a sales manager with strong communication skills.*")
+ st.title("🧠 SHL Assessment Recommendation Chatbot")
+ st.markdown("Ask something like: *I need an assessment for a sales manager with strong communication skills.*")
 # 
-# query = st.text_input("Enter your query:")
+ query = st.text_input("Enter your query:")
 # 
-# if "vector_store" not in st.session_state:
-#     df = load_data()
-#     st.session_state.vector_store = create_vector_store(df)
+ if "vector_store" not in st.session_state:
+     df = load_data()
+     st.session_state.vector_store = create_vector_store(df)
 # 
 # # Initialize llm and retriever outside the 'if query:' block
-# retriever = st.session_state.vector_store.as_retriever()
-# llm = ChatGroq(model="llama3-8b-8192", api_key=GROQ_API_KEY)
+ retriever = st.session_state.vector_store.as_retriever()
+ llm = ChatGroq(model="llama3-8b-8192", api_key=GROQ_API_KEY)
 # 
-# if query:
-#     # Now use the pre-initialized llm and retriever
-#     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
-#     response = qa_chain.run(query)
-#     st.write("### 🔍 Recommended Assessment:")
-#     st.write(response)
+ if query:
+     # Now use the pre-initialized llm and retriever
+     qa_chain = RetrievalQA.from_chain_type(llm=llm, retriever=retriever)
+     response = qa_chain.run(query)
+     st.write("### 🔍 Recommended Assessment:")
+     st.write(response)
 # 
 # # Now you can use llm and retriever here as well
-# qa_chain = RetrievalQA.from_chain_type(
-#     llm=llm,
-#     retriever=retriever,
-#     chain_type_kwargs={"prompt": PromptTemplate(
-#         template="You are an assessment recommendation engine. Based on the query and assessment details, suggest the best-fit SHL assessment.\n\nQuery: {question}\n\nContext:\n{context}\n\nAnswer:",
-#         input_variables=["question", "context"]
-#     )}
-# )
+ qa_chain = RetrievalQA.from_chain_type(
+     llm=llm,
+     retriever=retriever,
+     chain_type_kwargs={"prompt": PromptTemplate(
+         template="You are an assessment recommendation engine. Based on the query and assessment details, suggest the best-fit SHL assessment.\n\nQuery: {question}\n\nContext:\n{context}\n\nAnswer:",
+         input_variables=["question", "context"]
+     )}
+ )
 
 !pip install pyngrok
 
